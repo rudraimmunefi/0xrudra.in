@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Prototype Pollution | Rudra Pratap Singh</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+        crossorigin="anonymous">
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding-top: 50px;
+    }
+
+    h1 {
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 30px;
+    }
+
+    .meta {
+      font-style: italic;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .content p {
+      line-height: 1.6;
+    }
+
+    /* Code Formatting Styles */
+    pre {
+      background-color: #f4f4f4;
+      border-radius: 5px;
+      padding: 10px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      line-height: 1.5;
+    }
+
+    code {
+      background-color: #e8e8e8;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      padding: 2px 5px;
+    }
+
+    /* Back button styling */
+    .back-button {
+      display: block;
+      width: 100px;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Prototype Pollution</h1>
+    <div class="meta">Published on 10th December 2023 by 0xrudra</div>
+    <div class="content">
+
+    <h2>What is a prototype?</h2>
+<p>In JavaScript, a prototype is a fundamental concept that refers to a mechanism by which JavaScript objects inherit features from one another. Every JavaScript object has a "prototype" property that is a reference to another object. This referenced object can have its own properties and methods, which can be accessed by the original object. This prototype chain allows for properties and methods to be shared and reused across objects, providing a form of inheritance and resource efficiency in object-oriented programming in JavaScript.
+</p>
+
+<p>
+    Let's take an example of a simple object in JavaScript:<br>
+    
+ <pre><code>   let x = {"name":"Rudra"} // We create a object x with a property name
+    let y = {} // We create a empty object y
+    y.__proto__.admin = true // We add a property admin to the prototype of y which is Object.prototype by default.
+    y.__proto__.admin // true
+    x.admin // true</code></pre>
+
+We defined an object <b>x</b> which only has the property named <b>name</b>, later we created a new empty object named <b>y</b> and added a new property to it's prototype i.e. <b>admin</b>. Now, we can access the property <b>admin</b> from both the objects <b>x</b> and <b>y</b>. This is because of the prototype chain.
+Since both the objects <b>x</b> and <b>y</b> are inheriting from the same prototype i.e. <b>Object.prototype</b>, they both have access to the property <b>admin</b>.
+<br><br>
+Thing to note:<br><br>
+
+<ul>
+    <li>When you try to access a property of an object: if the property can't be found in the object itself, the prototype is searched for the property. If the property still can't be found, then the prototype's prototype is searched, and so on until either the property is found, or the end of the chain is reached, in which case undefined is returned. <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes">MDN</a></li>
+</ul>
+</p>
+
+<br>
+
+<h2>Prototype Pollution</h2>
+<p>The ability to inject new properties to a Object prototype is known as prototype pollution. Let's understand it with the example code that we discussed in the prototype section above.</p>
+
+We added a new property <b>admin</b> just to the prototype of <b>y</b> but what happens if we create a new empty object after we have modified the prototype? Let's see: <br><br>
+
+<pre><code>   let x = {"name":"Rudra"} // We create a object x with a property name
+    let y = {} // We create a empty object y
+    y.__proto__.admin = true // We add a property admin to the prototype of y which is Object.prototype by default.
+    y.__proto__.admin // true
+    x.admin // true
+    let abc = ""
+    abc.admin //true</code></pre>
+This highlights that newly created object will also have the property of admin even though we didn't add it to the object itself. This is because of the prototype chain. <br><br>
+</p>
+    </div>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button">Back</a>
+  </div>
+</body>
+</html>
