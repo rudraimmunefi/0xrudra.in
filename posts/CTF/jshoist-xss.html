@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Glacier CTF 2023 Writeup | Rudra Pratap Singh</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+        crossorigin="anonymous">
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding-top: 50px;
+    }
+
+    h1 {
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 30px;
+    }
+
+    .meta {
+      font-style: italic;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .content p {
+      line-height: 1.6;
+    }
+
+    /* Code Formatting Styles */
+    pre {
+      background-color: #f4f4f4;
+      border-radius: 5px;
+      padding: 10px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      line-height: 1.5;
+    }
+
+    code {
+      background-color: #e8e8e8;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      padding: 2px 5px;
+    }
+
+    /* Back button styling */
+    .back-button {
+      display: block;
+      width: 100px;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>XSS Challenge by Johan</h1>
+    <div class="meta">Published on 15th December 2023 by 0xrudra</div>
+    <div class="content">
+     <p>I recently engaged with an XSS (Cross-Site Scripting) challenge created by Johan Carlsson, which you can find on his Twitter page <a href="https://twitter.com/joaxcar/status/1732397874502078585">here</a>.<br> <br>Despite numerous attempts and some procrastination, which included skimming over JavaScript hoisting concepts, I found myself unable to crack the challenge. <br> <br>However, this process taught me an important lesson about the need to slow down and focus, as I often rush through code and articles.
+
+Previously, I had missed Johan's first challenge but later came across his write-up on Twitter <a href="https://twitter.com/joaxcar/status/1731766035513008238">here</a>. <br><br>This introduced me to the concept of JavaScript hoisting, a term I was unfamiliar with and initially found baffling, especially in understanding how it influenced the challenge's payload. Driven by curiosity, I quickly Googled the concept and superficially convinced myself that I had grasped it. Armed with this new, albeit surface-level knowledge, I attempted Johan's second XSS challenge and, unfortunately, did not succeed. <br><br>
+
+This experience serves as a reminder and an effort on my part to solidify my understanding of the basics of JavaScript hoisting and its practical applications.
+
+In a javascript the variables and function declaration are reassigned to the top of the scope before the code execution. This is called <b>hoisting</b>.
+<br><br>
+Let's understand better with an example.
+<br>
+<pre>
+<code><b>a = 5; 
+var a;</b></code>
+</pre>
+What do you think is suppose to happen after executing this piece of code since we haven't declared a in the start of the code? <br><br>
+
+The answer to this is that the code will not throw errors since the variable declaration was automatically reassigned to the top and assigning value 5 to a and this is known as javascript hoisting.  <br> <br>
+
+<h4><b>Note:</b> Only the declaration get's hoisted and not the initialization.</h4> <br>
+Hoisting works well with variables declared with var but will throw error if the variable was declared using let or const keyword.<br><br>
+<pre>
+<code><b>a = 5; 
+let a;</b></code>
+</pre><br>
+<i>Throws error `Uncaught <b>ReferenceError</b>: Cannot access 'a' before initialization`</i><br><br>
+
+Accessing a <i>`let`</i> declared variable before the declaration should result in `ReferenceError`.<br><br>
+
+Armed with the knowledge we shall solve the challenge right? Well, I'm noob so a big <b>NO</b>. <br><br>
+
+But let's try to understand what the code expect from us and let's see from there.
+
+Code is pretty straightforward (for me):<br>
+<pre>
+<code>
+(function(){
+  config = {
+    env: "prod"
+  }  
+  try {
+    if(config){
+      return;
+    }
+    // TODO handle missing config for: https://try-to-catch.glitch.me/"
+  } catch {
+    fetch("/error", {
+      method: "POST",
+      body: {
+        url:"https://try-to-catch.glitch.me/"
+      }
+    })
+  }
+})()
+</code>
+</pre>
+<br>
+We know that if we want to execute the sweet little popup we would need to enter the `catch` block but since the try block would return in the if condition no matter what you enter in the catch block it would not be executed.
+<br><br>
+So the idea is to use `let` variable hoisiting to create a variable named `config` such that if the code is rearranged and executed it will throw `ReferenceError` and we will enter the `catch` block.
+<br><br>
+POC taken from Jonah's blog - <a href="https://try-to-catch.glitch.me/%22-alert()-%22%E2%80%A8let%20config">https://try-to-catch.glitch.me/%22-alert()-%22%E2%80%A8let%20config</a>
+<br><br>
+It's very creative approach to solving the challenge it uses a unicode new line character to balance the try and catch block syntax and execute XSS.
+<br><br>
+
+With that I conclude my knowledge of hoisting, see you later.
+
+     </p>
+    </div>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button">Back</a>
+  </div>
+</body>
+</html>
