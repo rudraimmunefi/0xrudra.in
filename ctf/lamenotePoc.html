@@ -6,7 +6,6 @@
     async function go(body) {
       let url = "https://lamenote-web.chal.irisc.tf/search?query="+ body
       f = document.createElement('iframe')
-      f.setAttribute('sandbox', 'allow-same-origin');
       f.setAttribute('csp', "img-src 'none';")
       f.src = url; // go to the site
       f.onload = () => {
