@@ -11,7 +11,7 @@
       f.src = url; // go to the site
       document.body.appendChild(f)
       await new Promise(r => setTimeout(r, 1000)); // sleep 1000ms to wait for it to load 
-      f.src = 'https://0xrudra.in';
+      f.src = 'https://www.0xrudra.in/';
       await new Promise(r => setTimeout(r, 1000)); // sleep 1000ms to wait for it to load 
       let length = f.contentWindow.history.length;
       console.log(`${body} history=${length}`)
