@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>UofCTF Writeup | Rudra Pratap Singh</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+        crossorigin="anonymous">
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding-top: 50px;
+    }
+
+    h1 {
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 30px;
+    }
+
+    .meta {
+      font-style: italic;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .content p {
+      line-height: 1.6;
+    }
+
+    /* Code Formatting Styles */
+    pre {
+      background-color: #f4f4f4;
+      border-radius: 5px;
+      padding: 10px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      line-height: 1.5;
+    }
+
+    code {
+      background-color: #e8e8e8;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      padding: 2px 5px;
+    }
+
+    /* Back button styling */
+    .back-button {
+      display: block;
+      width: 100px;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>UofCTF 2024</h1>
+    <div class="meta">Published on 18th January 2024 by 0xrudra</div>
+    <div class="content">
+      <p>
+       It's been long time that I haven't played CTF for a long time but this time I could spare few minutes to play this CTF. I was able to solve one easy challenge about python escape which I find very interesting category.
+      <br><br>
+    The challenge name was <code>`Baby's First Pyjail`</code> which was an easy pyjail challenge which I made very difficult because of overcomplicating things.
+
+    We were given a host and when connected we were presented a python shell, I tried around and poked a little to get idea about the challenge where I discovered that there was a blacklist which checked certain characters in our user input. <br><br>
+    
+    I tried dumping the blacklist by using globals and saw <i>blacklist</i> which is a global variable consisted of the following blacklist.<br>
+
+    <code>['import', 'exec', 'eval', 'os', 'open', 'read', 'system', 'module', 'write', '.']</code>
+<br> I had some intution on how this could be solved since I had pleasure reading the blog on pyjail escapes which I recommend everyone to read. You can find the blog <a href="https://mucomplex.medium.com/python-jailbreak-mastery-4f759c9f1e8">here.</a>
+<br><br>
+
+I could not find what exact payload I used to solve this challenge (thanks to my management skills) but the idea was to bypass the dot (.) restriction by using getattr and string concatenation to bypass keyword restrictions.
+<br><br>
+
+Reading other Writeup I realized I made it more difficult than it was, we could have just reset the blacklist by reinitializing the blacklist variable to an empty list and then we could have imported os and then used os.system to get the flag.
+</p>
+
+    </div>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button">Back</a>
+  </div>
+</body>
+</html>
