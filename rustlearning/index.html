@@ -1,0 +1,11 @@
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<div id="content"></div>
+<script>
+  fetch('notes.md')
+    .then(response => response.text())
+    .then(text => {
+      document.getElementById('content').innerHTML = marked(text);
+    });
+</script>
+
