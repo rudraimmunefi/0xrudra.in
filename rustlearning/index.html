@@ -1,11 +1,18 @@
-
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<div id="content"></div>
-<script>
-  fetch('notes.md')
-    .then(response => response.text())
-    .then(text => {
-      document.getElementById('content').innerHTML = marked(text);
-    });
-</script>
-
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Rust Learning Notes</title>
+</head>
+<body>
+  <div id="content"></div>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    fetch('notes.md')
+      .then(response => response.text())
+      .then(text => {
+        document.getElementById('content').innerHTML = marked.parse(text);
+      });
+  </script>
+</body>
+</html>
