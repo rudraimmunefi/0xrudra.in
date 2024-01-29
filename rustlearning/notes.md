@@ -4,37 +4,37 @@
 
 * You can add methods to your custom datatypes such as struct using impl keywords it's similar to OOP in python and you can refer example of such methods in `enumlearn/main.rs` line 13.
 
-```
-impl areastruct {
-    fn area(&self) -> u32 {
-        self.width * self.height
-    }
-}
-```
+  ```
+  impl areastruct {
+      fn area(&self) -> u32 {
+          self.width * self.height
+      }
+  }
+  ```
 
 * Methods gets passed &self keyword whereas associate function are defined without self keyword.
 
-```
-impl associateimpl {
-    fn squre(size : u32) {
-        Rectangle {
-            width: size,
-            height: size
-        }
-    }
-}
-```
+  ```
+  impl associateimpl {
+      fn squre(size : u32) {
+          Rectangle {
+              width: size,
+              height: size
+          }
+      }
+  }
+  ```
 
 * Enums are namespace under `::` for example `let ipv4 = ipAddrKind::V4;`
 
 * `Option` enum is a very powerful enum provided by rust which allows us to define `none` values since its not there by default. 
 
-```
-enum Option<T> {
-    Some(T), // This defines that there can be some value of generic type T
-    None, // It defines a null value
-}
-```
+  ```
+  enum Option<T> {
+      Some(T), // This defines that there can be some value of generic type T
+      None, // It defines a null value
+  }
+  ```
 
 * `_` is a special type of operator in `match` operation which means match any other pattern which hasn't been matched yet.
 
@@ -66,8 +66,8 @@ enum Option<T> {
 
 * We can iterate on a hashmap to dump all the keys and values by using a similar snippet:
 
-```
-for (key, value) in &hashmap_object {
-    println!("{}{}",key,value);
-}
-```
+  ```
+  for (key, value) in &hashmap_object {
+      println!("{}{}",key,value);
+  }
+  ```
