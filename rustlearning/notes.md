@@ -71,3 +71,15 @@
       println!("{}{}",key,value);
   }
   ```
+
+* We can define generics in after the declaration of function / data types like `struct Test<T>` and can define multiple generic types in the declarations.
+
+* We can define generics in the implementation blocks but the syntax looks quite different.
+
+  ```
+  impl<T> Point<T> {
+    fn test(&self) -> &T {
+      &self.test
+    }
+   }
+  ```
