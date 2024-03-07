@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Prototype Pollution | Rudra Pratap Singh</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+        crossorigin="anonymous">
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding-top: 50px;
+    }
+
+    h1 {
+      font-weight: bold;
+      color: #007bff;
+      margin-bottom: 30px;
+    }
+
+    .meta {
+      font-style: italic;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+
+    .content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .content p {
+      line-height: 1.6;
+    }
+
+    /* Code Formatting Styles */
+    pre {
+      background-color: #f4f4f4;
+      border-radius: 5px;
+      padding: 10px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      line-height: 1.5;
+    }
+
+    code {
+      background-color: #e8e8e8;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      padding: 2px 5px;
+    }
+
+    /* Back button styling */
+    .back-button {
+      display: block;
+      width: 100px;
+      margin: 30px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Compound Finance | <a href="https://www.rareskills.io/compound-v3-book">Rareskills</a></h1>
+    <div class="meta">Published on 10th December 2023 by 0xrudra</div>
+    <div class="content">
+    I recently started studying compound finance using the compound-v3-book by Rareskills. This article aims to highlight my learning about different concepts in the web3 world.<br>
+    <br>
+    This is my bookmark for the <a href="https://www.rareskills.io/compound-v3-book">Rareskills</a> compound-v3-book.
+   <br><hr>
+   <h2><a href="https://www.rareskills.io/post/fallback-extension-pattern">The Fallback Extension Pattern</a></h2>
+
+   <p>Before starting we need to understand what is fallback and recieve function. The following figure explains the difference between the two quite expressively.<br>
+<img src="https://pbs.twimg.com/media/Fo16osvXgAIRDO4.jpg:large">
+
+In case you still do not understand the difference: The contract will trigger fallback() function if the msg.data is empty and if it isn't it will look for recieve() function. If the receive functions exits it executes it else it executes fallback() function.</p>
+    
+As per <a href="https://ethereum.org/en/developers/tutorials/downsizing-contracts-to-fight-the-contract-size-limit/">ethereum docs</a> the size of the
+size of the smart contract is limited to 24kb and to counter such restriction we use the fallback Extension pattern.
+<br><br>
+The way it works is that we create a new contract with the remaining functions we want to add to the original contract and 
+then we delegate the calls to the new contract. This way we can add more functions to the original contract without increasing the size of the original contract.
+<br><br>
+When we call the original contract that does not match the function signature of existing functions it will trigger fallback and delegate it to our secondary contract. <br> <br>
+
+<img src="https://static.wixstatic.com/media/935a00_a7da77bd1f83444d97d233e0b8de36a5~mv2.png/v1/fill/w_740,h_795,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/935a00_a7da77bd1f83444d97d233e0b8de36a5~mv2.png">
+<br>
+</div>
+
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-button">Back</a>
+  </div>
+</body>
+</html>

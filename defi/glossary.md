@@ -12,3 +12,7 @@
   * They offer leverage (control a larger position with less capital) but come with amplified risks. Losses can exceed your initial investment if the market moves against you.
 
 * **Perpetual contracts** are similar to futures but without an expiry date, allowing you to hold your position indefinitely. They also involve margin and leverage.
+
+<!-- add horizontal line -->
+---
+
