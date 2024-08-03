@@ -86,9 +86,26 @@
             padding: 10px;
             overflow-x: auto;
         }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
+    <a href="/" class="back-button">Back to Home</a>
     <h1>AI Notes Index</h1>
     <ul id="notesList"></ul>
     <div id="popup" class="popup">
