@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Notes Index</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        li:hover {
+            background-color: #e0e0e0;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .popup-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 70%;
+            max-height: 70%;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Notes Index</h1>
+    <ul id="notesList"></ul>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <div id="noteContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const notes = [
+            { title: "Uniswap Learning Notes", file: "/uniswap.md" },
+            // Add more notes here
+        ];
+
+        const notesList = document.getElementById('notesList');
+        const popup = document.getElementById('popup');
+        const noteContent = document.getElementById('noteContent');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        notes.forEach((note, index) => {
+            const li = document.createElement('li');
+            li.textContent = note.title;
+            li.onclick = () => showNote(index);
+            notesList.appendChild(li);
+        });
+
+        function showNote(index) {
+            fetch(notes[index].file)
+                .then(response => response.text())
+                .then(text => {
+                    noteContent.innerHTML = marked.parse(text);
+                    popup.style.display = 'block';
+                });
+        }
+
+        closeBtn.onclick = () => {
+            popup.style.display = 'none';
+        }
+
+        window.onclick = (event) => {
+            if (event.target == popup) {
+                popup.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
