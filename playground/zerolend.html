@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploring Vulnerabilities in ZeroLend's Governance System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        p {
+            margin: 20px 0;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 5px;
+            display: block;
+            white-space: pre-wrap;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exploring Vulnerabilities in ZeroLend's Governance System</h1>
+    <p>ZeroLend, a decentralized finance (DeFi) protocol, utilizes blockchain technology to offer governance through Non-Fungible Tokens (NFTs) that represent voting power. This innovative approach allows token holders to participate in decision-making processes that shape the protocol's future. However, recent findings have uncovered significant vulnerabilities that could potentially compromise the integrity and fairness of these governance mechanisms.</p>
+
+    <h2>Vulnerability 1: Unrestricted Minting Function</h2>
+    <p>The <code>VestedZeroNFT</code> contract in ZeroLend is designed to issue NFTs that represent vested tokens. These tokens are crucial as they determine a holder's voting power within the protocol. Ideally, such a function should be tightly controlled to prevent unauthorized access. However, the mint function lacks necessary access controls, allowing anyone to mint NFTs at will.</p>
+    <p>This flaw is critical because it enables attackers to flood the network with NFTs, diluting the voting power of legitimate token holders and potentially leading to governance attacks. The code responsible for this can be found in the <code>VestedZeroNFT</code> contract:</p>
+    <code>
+function mint(
+    address to,
+    uint256 linearAmount,
+    uint256 cliffAmount,
+    uint256 linearDuration,
+    uint256 cliffDuration,
+    uint256 unlockDate,
+    bool penalty,
+    uint8 category
+) public returns (uint256) {
+    // Missing access control
+    // ... minting logic ...
+}
+    </code>
+
+    <h2>Vulnerability 2: NFT Merging Bypass</h2>
+    <p>In ZeroLend's <code>BaseLocker</code> contract, there exists a function intended to merge two locked token positions. This feature should help users manage their stakes more flexibly. However, the merge function does not properly enforce the maximum lock duration, known as <code>MAXTIME</code>, potentially resulting in merged locks that exceed this duration.</p>
+    <p>The consequence of this oversight is significant: it allows users to artificially inflate their voting power by extending the lock duration of their tokens beyond the intended limits. This can lead to unfair advantages in voting and governance manipulation.</p>
+    <p>The problematic part of the code is as follows:</p>
+    <code>
+function merge(uint256 _from, uint256 _to) external override {
+    LockedBalance memory _locked0 = locked[_from];
+    LockedBalance memory _locked1 = locked[_to];
+    uint256 value0 = uint256(int256(_locked0.amount));
+    uint256 end = _locked0.end >= _locked1.end
+        ? _locked0.end
+        : _locked1.end;
+
+    locked[_from] = LockedBalance(0, 0, 0, 0);
+
+    _burn(_from);
+    _depositFor(_to, value0, end, _locked1, DepositType.MERGE_TYPE);
+}
+    </code>
+
+    <h2>Vulnerability 3: Incorrect Boolean Logic in Pool Registration</h2>
+    <p>The <code>PoolVoter</code> contract, which manages the registration of new pools for voting, contains a logical error in its <code>registerGauge()</code> function. The function is supposed to add new pools to the system, but due to an incorrect boolean check, it only adds pools that are already registered, which is counterintuitive and renders the function ineffective.</p>
+    <p>This error prevents the registration of new pools, potentially stifling the protocol's growth and adaptability. The specific code snippet with the issue is:</p>
+    <code>
+function registerGauge(address _asset, address _gauge) external onlyOwner returns (address) {
+    if (isPool[_asset]) {
+        _pools.push(_asset);
+        isPool[_asset] = true;
+    }
+    // ...
+}
+    </code>
+
+    <h2>Conclusion</h2>
+    <p>The vulnerabilities identified in ZeroLend's governance system highlight the need for rigorous security practices in the development of DeFi protocols. To mitigate these issues, it is recommended that ZeroLend implements proper access controls for the mint function, ensures the enforcement of lock durations during NFT merges, and corrects the boolean logic in the pool registration function. A comprehensive audit of the entire codebase is also advisable to prevent future vulnerabilities.</p>
+</body>
+</html>
