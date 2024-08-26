@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Notes Index</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+        h1 {
+            color: #ffffff;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #252526;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        li:hover {
+            background-color: #2a2d2e;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1e1e1e;
+            z-index: 1000;
+        }
+        .popup-content {
+            background-color: #1e1e1e;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        .close {
+            color: #d4d4d4;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            z-index: 1001;
+        }
+        .close:hover {
+            color: #ffffff;
+        }
+        #noteContent {
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 20px;
+        }
+        #noteContent h1, #noteContent h2, #noteContent h3 {
+            color: #569cd6;
+        }
+        #noteContent code {
+            background-color: #1e1e1e;
+            border: 1px solid #3c3c3c;
+            border-radius: 3px;
+            padding: 2px 4px;
+        }
+        #noteContent pre {
+            background-color: #1e1e1e;
+            border: 1px solid #3c3c3c;
+            border-radius: 3px;
+            padding: 10px;
+            overflow-x: auto;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">Back to Home</a>
+    <h1>AI Notes Index</h1>
+    <ul id="notesList"></ul>
+    <div id="popup" class="popup">
+        <span class="close">&times;</span>
+        <div class="popup-content">
+            <div id="noteContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const notes = [
+            { title: "Uniswap Learning Notes", file: "./uniswap.md" },
+            // Add more notes here
+        ];
+
+        const notesList = document.getElementById('notesList');
+        const popup = document.getElementById('popup');
+        const noteContent = document.getElementById('noteContent');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        notes.forEach((note, index) => {
+            const li = document.createElement('li');
+            li.textContent = note.title;
+            li.onclick = () => showNote(index);
+            notesList.appendChild(li);
+        });
+
+        function showNote(index) {
+            fetch(notes[index].file)
+                .then(response => response.text())
+                .then(text => {
+                    noteContent.innerHTML = marked.parse(text);
+                    popup.style.display = 'block';
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling on the main page
+                });
+        }
+
+        closeBtn.onclick = () => {
+            popup.style.display = 'none';
+            document.body.style.overflow = ''; // Restore scrolling on the main page
+        }
+
+        window.onclick = (event) => {
+            if (event.target == popup) {
+                popup.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling on the main page
+            }
+        }
+    </script>
+</body>
+</html>
