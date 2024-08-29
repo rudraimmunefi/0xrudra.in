@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synth Records</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Synth Records</h1>
+        <div class="controls">
+            <button id="startBtn">Start Recording</button>
+            <button id="pauseBtn" disabled>Pause</button>
+            <button id="resumeBtn" disabled>Resume</button>
+            <button id="stopBtn" disabled>Stop Recording</button>
+            <select id="qualitySelect">
+                <option value="720p">720p</option>
+                <option value="1080p">1080p</option>
+                <option value="4k">4K</option>
+            </select>
+            <label class="toggle">
+                <input type="checkbox" id="audioToggle" checked>
+                <span class="slider"></span>
+                Include Audio
+            </label>
+            <label class="toggle">
+                <input type="checkbox" id="cameraToggle" checked>
+                <span class="slider"></span>
+                Include Camera
+            </label>
+        </div>
+        <div id="preview">
+            <video id="screenPreview" autoplay muted></video>
+            <div id="cameraContainer" draggable="true">
+                <video id="cameraPreview" autoplay muted></video>
+                <div id="resizeHandle"></div>
+            </div>
+            <canvas id="combinedPreview"></canvas>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
